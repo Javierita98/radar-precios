@@ -1,0 +1,28 @@
+name: Radar de Precios Automatizado
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Todos los días a las 12:00 UTC (las 8:00 AM en Chile)
+  workflow_dispatch: # Permite darle a un botón de "Play" manual en GitHub
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tomar código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Instalar librerías necesarias
+        run: pip install requests
+
+      - name: Ejecutar el bot de alertas
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+        run: python bot_alerta.py
